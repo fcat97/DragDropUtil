@@ -24,7 +24,7 @@ and then Add the dependency in `build.gradle(module:app)`
 
 ```gradle
 dependencies {
-        implementation 'com.github.fcat97:DragDropUtil:1.1.1'
+        implementation 'com.github.fcat97:DragDropUtil:1.1.26'
 }
 ```
 
@@ -40,29 +40,31 @@ Let assume,
 
 ```java
 new DragSwapUtil<>(
-                binding.recyclerView, // the recyclerView to which drag&drop will be added
-		viewModel.listLiveData::getValue, // the list of items on which drag&swap is being made...
-                new DragSwapUtil.PriorityListeners() {
-                    @Override
-                    public int priorityOf(int itemPos) {
-                        // asking for the priority of the target item
-                        // return the target's priority
-                        // needed to persist data like in database...
+        binding.recyclerView, // the recyclerView to which drag&drop will be added
+		viewModel.listLiveData::getValue) // the list of items on which drag&swap is being made...
+		.setPriorityListeners( // only for persistence like in storing in database
+		    new DragSwapUtil.PriorityListeners() {
+                @Override
+                public int priorityOf(int itemPos) {
+                    // asking for the priority of the target item
+                    // return the target's priority
+                    // needed to persist data like in database...
 
-                        // return 0 if you don't care about database
-                        return adapter.getCurrentList().get(itemPos).tag.priority;
-                    }
+                    // return 0 if you don't care about database
+                    return adapter.getCurrentList().get(itemPos).tag.priority;
+                }
 
-                    @Override
-                    public void newPriorityOf(int itemPos, int priority) {
-                        // the final position of subject and its priority after move is complete
-                        // to persist the list i.e. save the list order...
-                        // just change the priority of the list item@itemPosition with given priority
+                @Override
+                public void newPriorityOf(int itemPos, int priority) {
+                    // the final position of subject and its priority after move is complete
+                    // to persist the list i.e. save the list order...
+                    // just change the priority of the list item@itemPosition with given priority
 
-                        // leave empty if you don't care about persistance
-                        adapter.getCurrentList().get(itemPos).tag.priority = priority;
-                    }
-                });
+                    // leave empty if you don't care about persistance
+                    adapter.getCurrentList().get(itemPos).tag.priority = priority;
+                }
+            });
+		)
 
 ```
 
