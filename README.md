@@ -68,9 +68,36 @@ new DragSwapUtil<>(
 
 ```
 
+```java
+new DragSwapUtil<>(
+        recyclerView, 
+        viewModel.listLiveData::getValue)
+        .setPriorityListeners(new DragSwapUtil.PriorityListeners() {
+                    @Override
+                    public int priorityOf(int itemPos) {
+                        // asking for the priority of the target item
+                        // return the target's priority
+                        // needed to persist data like in database...
+                
+                        // return 0 if you don't care about database
+                        return adapter.getCurrentList().get(itemPos).tag.priority;
+                    }
+
+                    @Override
+                    public void newPriorityOf(int itemPos, int priority) {
+                        // the final position of subject and its priority after move is complete
+                        // to persist the list i.e. save the list order...
+                        // just change the priority of the list item@itemPosition with given priority
+                
+                        // leave empty if you don't care about persistance
+                        adapter.getCurrentList().get(itemPos).tag.priority = priority;
+                    }
+        });
+```
+
 And there are listeners which will notify you...
 each time items position are changed in list..
 add them when needed...
 
-**Thats all...**
+**That's all...**
 **Happy Coding...**
