@@ -24,7 +24,7 @@ and then Add the dependency in `build.gradle(module:app)`
 
 ```gradle
 dependencies {
-        implementation 'com.github.fcat97:DragDropUtil:1.0.15'
+        implementation 'com.github.fcat97:DragDropUtil:1.1.1'
 }
 ```
 
@@ -41,6 +41,7 @@ Let assume,
 ```java
 new DragSwapUtil<>(
                 binding.recyclerView, // the recyclerView to which drag&drop will be added
+		viewModel.listLiveData::getValue, // the list of items on which drag&swap is being made...
                 new DragSwapUtil.PriorityListeners() {
                     @Override
                     public int priorityOf(int itemPos) {
@@ -61,7 +62,7 @@ new DragSwapUtil<>(
                         // leave empty if you don't care about persistance
                         adapter.getCurrentList().get(itemPos).tag.priority = priority;
                     }
-                }, viewModel.listLiveData::getValue); // the list of items on which drag&swap is being made...
+                });
 
 ```
 
