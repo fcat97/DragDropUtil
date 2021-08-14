@@ -38,35 +38,6 @@ Let assume,
 
 `target` is the item in which position the item will be moved finally
 
-```java
-new DragSwapUtil<>(
-        binding.recyclerView, // the recyclerView to which drag&drop will be added
-		viewModel.listLiveData::getValue) // the list of items on which drag&swap is being made...
-		.setPriorityListeners( // only for persistence like in storing in database
-		    new DragSwapUtil.PriorityListeners() {
-                @Override
-                public int priorityOf(int itemPos) {
-                    // asking for the priority of the target item
-                    // return the target's priority
-                    // needed to persist data like in database...
-
-                    // return 0 if you don't care about database
-                    return adapter.getCurrentList().get(itemPos).tag.priority;
-                }
-
-                @Override
-                public void newPriorityOf(int itemPos, int priority) {
-                    // the final position of subject and its priority after move is complete
-                    // to persist the list i.e. save the list order...
-                    // just change the priority of the list item@itemPosition with given priority
-
-                    // leave empty if you don't care about persistance
-                    adapter.getCurrentList().get(itemPos).tag.priority = priority;
-                }
-            });
-		)
-
-```
 
 ```java
 new DragSwapUtil<>(
