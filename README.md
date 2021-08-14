@@ -11,7 +11,7 @@ that is needed to add Drag and Swap functionality in recyclerView
 
 Add it in your root build.gradle at the end of repositories:
 
-```graddle
+```gradle
 allprojects {
 	repositories {
 		...
@@ -22,7 +22,7 @@ allprojects {
 
 and then Add the dependency in `build.gradle(module:app)`
 
-```graddle
+```gradle
 dependencies {
         implementation 'com.github.fcat97:DragDropUtil:1.0.15'
 }
@@ -33,7 +33,9 @@ now sync the project
 #### Step 2: Using the library
 
 Let assume,
+
 `subject` is the item which is being moved
+
 `target` is the item in which position the item will be moved finally
 
 ```java
@@ -64,7 +66,9 @@ new DragSwapUtil<>(
 ```
 
 And there are listeners which will notify you...
+
 each time items position are changed in list..
+
 add them when needed...
 
 
