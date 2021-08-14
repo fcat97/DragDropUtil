@@ -27,8 +27,8 @@ public class DragSwapUtil<T> extends ItemTouchHelper.SimpleCallback {
      * @param getListCallback interface which fetch current list of items
      */
     public DragSwapUtil(RecyclerView bindTo,
-                        PriorityListeners priorityListeners,
-                        GetListCallback<T> getListCallback) {
+                        GetListCallback<T> getListCallback,
+                        PriorityListeners priorityListeners) {
         super(ItemTouchHelper.UP | ItemTouchHelper.DOWN |
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
                 0);
