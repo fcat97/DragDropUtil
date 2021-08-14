@@ -41,6 +41,7 @@ Let assume,
 ```java
 new DragSwapUtil<>(
                 binding.recyclerView, // the recyclerView to which drag&drop will be added
+		viewModel.listLiveData::getValue, // the list of items on which drag&swap is being made...
                 new DragSwapUtil.PriorityListeners() {
                     @Override
                     public int priorityOf(int itemPos) {
@@ -61,7 +62,7 @@ new DragSwapUtil<>(
                         // leave empty if you don't care about persistance
                         adapter.getCurrentList().get(itemPos).tag.priority = priority;
                     }
-                }, viewModel.listLiveData::getValue); // the list of items on which drag&swap is being made...
+                });
 
 ```
 
