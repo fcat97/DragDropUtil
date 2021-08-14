@@ -66,11 +66,8 @@ new DragSwapUtil<>(
 ```
 
 And there are listeners which will notify you...
-
 each time items position are changed in list..
-
 add them when needed...
 
-
-Thats all...
-Happy Coding...
+**Thats all...**
+**Happy Coding...**
