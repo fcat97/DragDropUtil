@@ -24,7 +24,7 @@ and then Add the dependency in `build.gradle(module:app)`
 
 ```gradle
 dependencies {
-        implementation 'com.github.fcat97:DragDropUtil:1.0.15'
+        implementation 'com.github.fcat97:DragDropUtil:1.1.1'
 }
 ```
 
