@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,12 +28,13 @@ public class DragSwapUtil<T> extends ItemTouchHelper.SimpleCallback {
     public DragSwapUtil(RecyclerView bindTo,
                         GetListCallback<T> getListCallback) {
         super(ItemTouchHelper.UP | ItemTouchHelper.DOWN |
-                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
+                        ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT,
                 0);
         this.getListCallback = getListCallback;
         this.listOrder = ListOrder.DESCENDING;
         new ItemTouchHelper(this).attachToRecyclerView(bindTo);
     }
+
 
     @Override
     public boolean onMove(@NonNull RecyclerView recyclerView,
@@ -42,32 +44,35 @@ public class DragSwapUtil<T> extends ItemTouchHelper.SimpleCallback {
         int from = viewHolder.getAdapterPosition();
         int to = target.getAdapterPosition();
 
-        // swap priorities
-        int viewHolderPriorityAfterMove = 0;
-        int targetPriorityAfterMove = 0;
-        if (priorityListeners != null) {
-            viewHolderPriorityAfterMove = priorityListeners.priorityOf(to);
-            targetPriorityAfterMove = priorityListeners.priorityOf(from);
+        Objects.requireNonNull(recyclerView.getAdapter()).notifyItemMoved(from, to);
 
-            if (viewHolderPriorityAfterMove == targetPriorityAfterMove) {
-                Log.d(TAG, "onMove: viewHolderPriorityAfterMove==targetPriorityAfterMove = " + viewHolderPriorityAfterMove);
+
+        // swap priorities
+        if (priorityListeners != null) {
+            int subPrio = priorityListeners.priorityOf(to);
+            int tarPrio = priorityListeners.priorityOf(from);
+
+            if (subPrio == tarPrio) {
+                Log.d(TAG, "onMove: subPrio==tarPrio = " + subPrio);
                 if (from > to) { // moving upward
                     if (listOrder == ListOrder.DESCENDING) { // increase priority
-                        viewHolderPriorityAfterMove += 1;
-                    } else viewHolderPriorityAfterMove -= 1;
+                        subPrio += 1;
+                    } else subPrio -= 1;
                 } else { // moving downward
                     if (listOrder == ListOrder.DESCENDING) { // decrease priority
-                        viewHolderPriorityAfterMove -= 1;
-                    } else viewHolderPriorityAfterMove += 1;
+                        subPrio -= 1;
+                    } else subPrio += 1;
                 }
             }
 
-            Log.d(TAG, "onMove: viewHolderPriorityAfterMove " + viewHolderPriorityAfterMove);
-            Log.d(TAG, "onMove: targetPriorityAfterMove " + targetPriorityAfterMove);
+            Log.d(TAG, "onMove: subPrio " + subPrio);
+            Log.d(TAG, "onMove: tarPrio " + tarPrio);
+
+            priorityListeners.newPriorityOf(from, subPrio); // send new priority by callback
+            priorityListeners.newPriorityOf(to, tarPrio); // send new priority by callback
         }
 
-
-        // insert item to target position and remove from previous pos
+//        // insert item to target position and remove from previous pos
         List<T> list = getListCallback.getList(); // on which shifting will be made
         T itemFrom = list.get(from);
         try {
@@ -79,17 +84,8 @@ public class DragSwapUtil<T> extends ItemTouchHelper.SimpleCallback {
             e.printStackTrace();
         }
 
-        // finally notify the adapter...
-        Objects.requireNonNull(recyclerView.getAdapter()).notifyItemMoved(from, to);
-
-        // notice that after swap...
-        // the viewHolder is at the `to` location
-        // and the target is at `from` location
-
-        if (priorityListeners != null) {
-            priorityListeners.newPriorityOf(to, viewHolderPriorityAfterMove); // send new priority by callback
-            priorityListeners.newPriorityOf(from, targetPriorityAfterMove); // send new priority by callback
-        }
+        recyclerView.getAdapter().notifyItemChanged(from);
+        recyclerView.getAdapter().notifyItemChanged(to);
 
         return true;
     }
@@ -103,13 +99,9 @@ public class DragSwapUtil<T> extends ItemTouchHelper.SimpleCallback {
                         int x, int y) {
         super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
 
-        // notify adapter that item has changed
-        Objects.requireNonNull(recyclerView.getAdapter()).notifyItemChanged(fromPos);
-        Objects.requireNonNull(recyclerView.getAdapter()).notifyItemChanged(toPos);
-
         // do some work after shifting done...
         // eg. push modified list to repository for persistence...
-        if (onMovedListener != null) onMovedListener.onMoved(fromPos, toPos);
+        if (onMovedListener != null && fromPos != toPos) onMovedListener.onMoved(fromPos, toPos);
     }
 
     @Override
@@ -118,7 +110,7 @@ public class DragSwapUtil<T> extends ItemTouchHelper.SimpleCallback {
 
         // do some work when item swiped done...
         // eg. push modified list to repository for persistence...
-        if (onSwappedListener != null) onSwappedListener.onSwiped();
+        if (onSwappedListener != null) onSwappedListener.onSwiped(viewHolder.getAdapterPosition(), direction);
     }
 
     public DragSwapUtil<T> setListOrder(ListOrder listOrder) {
@@ -162,8 +154,8 @@ public class DragSwapUtil<T> extends ItemTouchHelper.SimpleCallback {
          */
         void newPriorityOf(int itemPos, int newPriority);
     }
-    public interface OnMovedListener { void onMoved(int from, int to);}
-    public interface OnSwappedListener { void onSwiped();}
+    public interface OnMovedListener { void onMoved(int from, int to); }
+    public interface OnSwappedListener { void onSwiped(int position, int direction); }
 
     /**
      * Listener which fetch the list on which shifting will be made

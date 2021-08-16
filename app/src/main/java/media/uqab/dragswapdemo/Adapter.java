@@ -12,15 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class Adapter extends ListAdapter<Item, Adapter.ViewHolder> {
 
-    private static DiffUtil.ItemCallback<Item> DIFF_CALLBACK = new DiffUtil.ItemCallback<Item>() {
+    private static final DiffUtil.ItemCallback<Item> DIFF_CALLBACK = new DiffUtil.ItemCallback<Item>() {
         @Override
         public boolean areItemsTheSame(@NonNull Item oldItem, @NonNull Item newItem) {
-            return oldItem.equals(newItem);
+            return false;
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Item oldItem, @NonNull Item newItem) {
-            return oldItem.name.equals(newItem.name) && oldItem.priority == newItem.priority;
+            return false;
         }
     };
 
@@ -45,6 +45,7 @@ public class Adapter extends ListAdapter<Item, Adapter.ViewHolder> {
         holder.hashTv.setText(hash);
         holder.priorityTv.setText(String.valueOf(item.priority));
     }
+
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView nameTv;

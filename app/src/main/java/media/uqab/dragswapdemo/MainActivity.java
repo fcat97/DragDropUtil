@@ -8,7 +8,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import media.uqab.dragswaputil.DragSwapUtil;
 
@@ -27,25 +26,21 @@ public class MainActivity extends AppCompatActivity {
         adapter.submitList(getArrayList());
 
         new DragSwapUtil<>(recyclerView, this::getArrayList)
-                .setPriorityListeners(new DragSwapUtil.PriorityListeners() {
-                            @Override
-                            public int priorityOf(int itemPos) {
-                                Log.d(TAG, "priorityOf: --------------------------------");
-                                Item i = getArrayList().get(itemPos);
-                                Log.d(TAG, "priorityOf: " + i.name + "@" + i.hashCode() + " ->" + i.priority);
-//                              for (Item i: getArrayList()) Log.d(TAG, "priorityOf: " + i.name + "@" + i.hashCode() + " ->" + i.priority);
-                                return getArrayList().get(itemPos).priority;
-                            }
+            .setPriorityListeners(new DragSwapUtil.PriorityListeners() {
+                @Override
+                public int priorityOf(int itemPos) {
+                    return getArrayList().get(itemPos).priority;
+                }
 
-                            @Override
-                            public void newPriorityOf(int itemPos, int priority) {
-                                getArrayList().get(itemPos).priority = priority;
-                                Log.d(TAG, "newPriorityOf: -----------------------------------");
-                                Item i = getArrayList().get(itemPos);
-                                Log.d(TAG, "newPriorityOf: " + i.name + "@" + i.hashCode() + " ->" + i.priority);
-//                              for (Item i: getArrayList()) Log.d(TAG, "newPriorityOf: " + i.name + "@" + i.hashCode() + " ->" + i.priority);
-                            }
-                        });
+                @Override
+                public void newPriorityOf(int itemPos, int priority) {
+                    getArrayList().get(itemPos).priority = priority;
+                }
+            })
+            .setOnMovedListener((int from, int to) -> {
+                logList("afterMoved " + from + "--->" + to);
+            }
+        );
     }
 
     @Override
@@ -53,8 +48,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         // do the persistence functionality here...
         // i.e. pushing to database or network etc...
-        Log.d(TAG, "onDestroy: --------------------------------------");
-        for (Item i: getArrayList()) Log.d(TAG, "onDestroy: " + i.name + "@" + i.hashCode() + " ->" + i.priority);
+        logList("onDestroy");
     }
 
     private ArrayList<Item> getArrayList() {
@@ -70,7 +64,14 @@ public class MainActivity extends AppCompatActivity {
             arrayList.add(new Item("Coconut", 8));
 
             Collections.reverse(arrayList);
+            logList("Initial List");
         }
+
         return arrayList;
+    }
+
+    private void logList(String tag) {
+        Log.d(TAG, tag + "-------------------------------------------");
+        for (Item i: getArrayList()) Log.d(tag, i.name + "@" + i.hashCode() + " ->" + i.priority);
     }
 }

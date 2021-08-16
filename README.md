@@ -24,7 +24,7 @@ and then Add the dependency in `build.gradle(module:app)`
 
 ```gradle
 dependencies {
-        implementation 'com.github.fcat97:DragDropUtil:1.1.26'
+        implementation 'com.github.fcat97:DragDropUtil:1.3.60'
 }
 ```
 
@@ -38,32 +38,47 @@ Let assume,
 
 `target` is the item in which position the item will be moved finally
 
+**Java way**
 
 ```java
-new DragSwapUtil<>(
-        recyclerView, 
-        viewModel.listLiveData::getValue)
-        .setPriorityListeners(new DragSwapUtil.PriorityListeners() {
-                    @Override
-                    public int priorityOf(int itemPos) {
-                        // asking for the priority of the target item
-                        // return the target's priority
-                        // needed to persist data like in database...
-                
-                        // return 0 if you don't care about database
-                        return adapter.getCurrentList().get(itemPos).tag.priority;
-                    }
+new DragSwapUtil<>(recyclerView, viewModel.listLiveData::getValue)
+    .setPriorityListeners(new DragSwapUtil.PriorityListeners() {
+        @Override
+        public int priorityOf(int itemPos) {
+            // asking for the priority of the target item
+            // return the target's priority
+            // needed to persist data like in database...
 
-                    @Override
-                    public void newPriorityOf(int itemPos, int priority) {
-                        // the final position of subject and its priority after move is complete
-                        // to persist the list i.e. save the list order...
-                        // just change the priority of the list item@itemPosition with given priority
-                
-                        // leave empty if you don't care about persistance
-                        adapter.getCurrentList().get(itemPos).tag.priority = priority;
-                    }
-        });
+            // return 0 if you don't care about database
+            return adapter.getCurrentList().get(itemPos).tag.priority;
+        }
+
+        @Override
+        public void newPriorityOf(int itemPos, int priority) {
+            // the final position of subject and its priority after move is complete
+            // to persist the list i.e. save the list order...
+            // just change the priority of the list item@itemPosition with given priority
+
+            // leave empty if you don't care about persistance
+            adapter.getCurrentList().get(itemPos).tag.priority = priority;
+        }
+    }
+);
+```
+
+> Kotlin
+
+```kotlin
+DragSwapUtil(binding.recyclerView) { getBookList() }
+    .setPriorityListeners(object : DragSwapUtil.PriorityListeners {
+        override fun priorityOf(itemPos: Int): Int {
+            return adapter.currentList[itemPos].priority
+        }
+
+        override fun newPriorityOf(itemPos: Int, priority: Int) {
+            getBookList()[itemPos].priority = priority
+        }
+    })
 ```
 
 And there are listeners which will notify you...
