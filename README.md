@@ -76,7 +76,7 @@ DragSwapUtil(binding.recyclerView) { getBookList() }
         }
 
         override fun newPriorityOf(itemPos: Int, priority: Int) {
-            getBookList()[itemPos].priority = priority
+            adapter.currentList[itemPos].priority = priority
         }
     })
 ```
