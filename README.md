@@ -69,7 +69,7 @@ new DragSwapUtil<>(recyclerView, viewModel.listLiveData::getValue)
 > Kotlin
 
 ```kotlin
-DragSwapUtil(binding.recyclerView) { getBookList() }
+DragSwapUtil(binding.recyclerView) { viewModel.listLiveData.values }
     .setPriorityListeners(object : DragSwapUtil.PriorityListeners {
         override fun priorityOf(itemPos: Int): Int {
             return adapter.currentList[itemPos].priority
