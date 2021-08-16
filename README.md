@@ -38,7 +38,7 @@ Let assume,
 
 `target` is the item in which position the item will be moved finally
 
-**Java way**
+> Java
 
 ```java
 new DragSwapUtil<>(recyclerView, viewModel.listLiveData::getValue)
