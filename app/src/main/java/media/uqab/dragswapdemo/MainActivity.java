@@ -29,11 +29,15 @@ public class MainActivity extends AppCompatActivity {
             .setPriorityListeners(new DragSwapUtil.PriorityListeners() {
                 @Override
                 public int priorityOf(int itemPos) {
+                    Log.d(TAG, "priorityOf: " + itemPos + " : " + adapter.getCurrentList().get(itemPos).priority);
                     return getArrayList().get(itemPos).priority;
                 }
 
                 @Override
                 public void newPriorityOf(int itemPos, int priority) {
+                    Log.d(TAG, "newPriorityOf: " + itemPos + " : " +
+                            adapter.getCurrentList().get(itemPos).priority +
+                            " -> " + priority);
                     getArrayList().get(itemPos).priority = priority;
                 }
             })
